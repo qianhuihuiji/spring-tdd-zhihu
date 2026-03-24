@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapperExt">
+    <select id="selectByUsername" resultType="com.nofirst.spring.tdd.zhihu.mbg.model.User">
+        select
+        <include refid="com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper.Base_Column_List"/>
+        from user
+        where name = #{username,jdbcType=VARCHAR}
+    </select>
+</mapper>

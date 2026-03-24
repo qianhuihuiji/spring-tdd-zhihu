@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nofirst.spring.tdd.zhihu.mbg.mapper.VoteMapperExt">
+
+    <select id="countByResource" resultType="com.nofirst.spring.tdd.zhihu.model.dto.VoteCountDto">
+        SELECT resource_id AS resourceId, COUNT(*) AS voteCount
+        FROM vote
+        WHERE action_type = #{voteType,jdbcType=TINYINT}
+        AND resource_type = #{resourceType,jdbcType=VARCHAR}
+        <if test="answerIds != null and answerIds.size() > 0">
+            AND resource_id IN
+            <foreach collection="answerIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        GROUP BY resource_id
+    </select>
+</mapper>
