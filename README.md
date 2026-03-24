@@ -1,6 +1,6 @@
-# Spring TDD 知乎 startup 项目
+# Spring TDD 知乎项目
 
-> 使用 TDD（测试驱动开发）方式构建的仿知乎论坛项目的起步工程
+> 使用 TDD（测试驱动开发）方式构建的仿知乎论坛项目
 
 ## 项目简介
 
@@ -21,56 +21,6 @@
 | **数据库版本控制** | Flyway |
 | **测试** | JUnit, Testcontainers, Spring Boot Test |
 | **工具** | Lombok, PageHelper 分页插件 |
-
-## 项目结构
-
-```
-spring-tdd-zhihu-startup/
-├── src/main/
-│   ├── java/com/nofirst/spring/tdd/zhihu/startup/
-│   │   ├── common/              # 通用响应封装
-│   │   │   ├── CommonResult.java
-│   │   │   ├── IErrorCode.java
-│   │   │   └── ResultCode.java
-│   │   ├── config/              # 配置类
-│   │   │   ├── SecurityConfig.java
-│   │   │   └── MyBatisConfig.java
-│   │   ├── controller/          # 控制器层
-│   │   │   └── UserController.java
-│   │   ├── exception/           # 异常处理
-│   │   │   ├── ApiException.java
-│   │   │   └── GlobalExceptionHandler.java
-│   │   ├── mbg/                 # MyBatis Generator 相关
-│   │   │   ├── mapper/          # Mapper 接口
-│   │   │   ├── model/           # 实体模型
-│   │   │   ├── CommentGenerator.java
-│   │   │   └── Generator.java
-│   │   ├── model/dto/           # 数据传输对象
-│   │   │   ├── UserLoginDto.java
-│   │   │   └── UserRegisterDto.java
-│   │   ├── security/            # 安全认证相关
-│   │   │   ├── AccountUser.java
-│   │   │   ├── CustomUserDetailsService.java
-│   │   │   ├── JwtAccessDeniedHandler.java
-│   │   │   ├── JwtAuthenticationEntryPoint.java
-│   │   │   ├── JwtAuthenticationFilter.java
-│   │   │   └── JwtUtil.java
-│   │   └── SpringTddZhihuStartupApplication.java
-│   └── resources/
-│       ├── db/migration/        # Flyway 数据库迁移脚本
-│       │   ├── V2026010401__create_table_user.sql
-│       │   └── V2026010402__init_user_data.sql
-│       ├── mapper/              # MyBatis XML 映射文件
-│       ├── application.yaml     # 应用配置
-│       ├── generator.properties # MyBatis Generator 配置
-│       └── generatorConfig.xml  # MyBatis Generator 配置
-└── src/test/
-    └── java/com/nofirst/spring/tdd/zhihu/startup/
-        ├── factory/             # 测试工厂
-        │   └── UserFactory.java
-        └── intergration/        # 集成测试
-            └── BaseContainerTest.java
-```
 
 ## 核心功能模块
 
