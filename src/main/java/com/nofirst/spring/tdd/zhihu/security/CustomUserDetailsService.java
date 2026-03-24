@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        // 2. 封装用户信息
-        return new AccountUser(user.getId(), user.getName(), user.getPassword());
+        // 2. 封装用户信息（注意参数顺序：userId, password, username）
+        return new AccountUser(user.getId(), user.getPassword(), user.getName());
     }
 }

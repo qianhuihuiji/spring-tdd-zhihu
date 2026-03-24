@@ -3,6 +3,7 @@ package com.nofirst.spring.tdd.zhihu.controller;
 import com.nofirst.spring.tdd.zhihu.common.CommonResult;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.User;
+import com.nofirst.spring.tdd.zhihu.mbg.model.UserExample;
 import com.nofirst.spring.tdd.zhihu.model.dto.UserLoginDto;
 import com.nofirst.spring.tdd.zhihu.model.dto.UserRegisterDto;
 import com.nofirst.spring.tdd.zhihu.security.AccountUser;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -36,13 +38,11 @@ public class UserController {
 
     @PostMapping("/register")
     public CommonResult<String> register(@RequestBody @Validated UserRegisterDto registerDto) {
-        // 1. 检查用户名是否已存在
-        User existingUser = userMapper.selectByExample(null)
-                .stream()
-                .filter(u -> u.getName().equals(registerDto.getName()))
-                .findFirst()
-                .orElse(null);
-        if (existingUser != null) {
+        // 1. 检查用户名是否已存在（使用数据库查询，避免全表加载到内存）
+        UserExample example = new UserExample();
+        example.createCriteria().andNameEqualTo(registerDto.getName());
+        List<User> users = userMapper.selectByExample(example);
+        if (!users.isEmpty()) {
             return CommonResult.failed("用户名已存在");
         }
 
@@ -81,6 +81,6 @@ public class UserController {
         // JWT 是无状态的，服务端不保存会话信息
         // 前端调用此接口后，自行删除本地存储的 Token 即可
         SecurityContextHolder.clearContext();
-        return CommonResult.success("退出登录成功，请前端删除本地存储的 Token");
+        return CommonResult.success("退出登录成功");
     }
 }

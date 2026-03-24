@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push)",
+      "Bash(scripts\\run-test.cmd *)",
+      "Bash(dir *)",
+      "Bash(mvn.cmd *)",
+      "Bash(type *)",
+      "Bash(findstr *)",
+      "Bash(powershell *)",
+      "Bash(git checkout *)"
+    ]
+  }
+}

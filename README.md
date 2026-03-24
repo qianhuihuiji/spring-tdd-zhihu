@@ -100,8 +100,48 @@ mvn spring-boot:run
 ```
 
 #### 4. 运行测试
+
+**使用测试脚本（推荐）**：
+
 ```bash
+# Windows
+scripts\run-test.cmd
+
+# Linux/Mac
+./scripts/run-test.sh
+```
+
+**运行指定测试类**：
+
+```bash
+# Windows
+scripts\run-test.cmd UserAuthTest
+
+# Linux/Mac
+./scripts/run-test.sh UserAuthTest
+```
+
+**运行指定测试方法**：
+
+```bash
+# Windows
+scripts\run-test.cmd UserAuthTest guests_can_register_with_valid_credentials
+
+# Linux/Mac
+./scripts/run-test.sh UserAuthTest guests_can_register_with_valid_credentials
+```
+
+**使用 Maven 命令**：
+
+```bash
+# 运行所有测试
 mvn test
+
+# 运行指定测试类
+mvn test -Dtest=UserAuthTest
+
+# 运行指定测试方法
+mvn test -Dtest=UserAuthTest#guests_can_register_with_valid_credentials
 ```
 
 ### API 示例

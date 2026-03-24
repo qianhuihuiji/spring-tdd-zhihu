@@ -24,15 +24,14 @@ public class JwtUtil {
 
     public static final String HEADER = "Authorization";
 
-
     // JWT 密钥（生产环境需放在配置中心，加密存储）
     @Value("${jwt.secret:defaultSecretKey123456}")
     private String secret;
-    // Token 过期时间（2小时，单位：毫秒）
+    // Token 过期时间（2 小时，单位：毫秒）
     @Value("${jwt.expire:7200000}")
     private Long expire;
 
-    // 生成 JWT Token（携带用户ID、角色信息）
+    // 生成 JWT Token（携带用户 ID、角色信息）
     public String generateToken(Integer userId, String username) {
         // 1. 构建载荷信息
         Map<String, Object> claims = new HashMap<>();
@@ -84,10 +83,10 @@ public class JwtUtil {
         }
     }
 
-    // 从 Token 中获取用户ID
-    public Long getUserIdFromToken(String token) {
+    // 从 Token 中获取用户 ID
+    public Integer getUserIdFromToken(String token) {
         Claims claims = parseToken(token);
-        return claims.get("userId", Long.class);
+        return (Integer) claims.get("userId");
     }
 
     // 从 Token 中获取用户角色
