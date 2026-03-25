@@ -36,10 +36,7 @@ class CreateQuestionsTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        QuestionExample example = new QuestionExample();
-        // 空条件，匹配所有数据，等价于 delete * from question
-        example.createCriteria();
-        questionMapper.deleteByExample(example);
+        cleanUpQuestions();
     }
 
     @Test

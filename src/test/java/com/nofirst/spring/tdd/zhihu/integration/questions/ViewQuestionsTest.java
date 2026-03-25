@@ -12,7 +12,6 @@ import com.nofirst.spring.tdd.zhihu.mbg.mapper.AnswerMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Answer;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Question;
-import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.model.vo.AnswerVo;
 import com.nofirst.spring.tdd.zhihu.model.vo.QuestionVo;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,10 +41,7 @@ class ViewQuestionsTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        QuestionExample example = new QuestionExample();
-        // 空条件，匹配所有数据，等价于 delete * from question
-        example.createCriteria();
-        questionMapper.deleteByExample(example);
+        cleanUpQuestions();
     }
 
     @Test

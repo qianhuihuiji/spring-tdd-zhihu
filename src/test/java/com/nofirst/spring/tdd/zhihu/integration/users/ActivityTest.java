@@ -33,9 +33,7 @@ class ActivityTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        ActivityExample example = new ActivityExample();
-        example.createCriteria();
-        activityMapper.deleteByExample(example);
+        cleanUpActivities();
     }
 
     @Test

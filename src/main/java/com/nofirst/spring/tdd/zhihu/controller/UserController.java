@@ -1,6 +1,7 @@
 package com.nofirst.spring.tdd.zhihu.controller;
 
 import com.nofirst.spring.tdd.zhihu.common.CommonResult;
+import com.nofirst.spring.tdd.zhihu.event.UserRegisteredEvent;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.User;
 import com.nofirst.spring.tdd.zhihu.mbg.model.UserExample;
@@ -9,6 +10,7 @@ import com.nofirst.spring.tdd.zhihu.model.dto.UserRegisterDto;
 import com.nofirst.spring.tdd.zhihu.security.AccountUser;
 import com.nofirst.spring.tdd.zhihu.security.JwtUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +36,7 @@ public class UserController {
     private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @PostMapping("/register")
@@ -57,6 +60,9 @@ public class UserController {
 
         // 3. 插入数据库
         userMapper.insertSelective(user);
+
+        // 4. 发布用户注册事件，触发验证邮件发送
+        eventPublisher.publishEvent(new UserRegisteredEvent(this, user.getId(), user.getEmail()));
 
         return CommonResult.success("注册成功");
     }

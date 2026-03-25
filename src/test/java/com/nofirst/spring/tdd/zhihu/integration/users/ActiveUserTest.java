@@ -10,9 +10,7 @@ import com.nofirst.spring.tdd.zhihu.integration.BaseContainerTest;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.AnswerMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Answer;
-import com.nofirst.spring.tdd.zhihu.mbg.model.AnswerExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Question;
-import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.model.vo.UserVo;
 import com.nofirst.spring.tdd.zhihu.redis.JsonRedisTemplate;
 import com.nofirst.spring.tdd.zhihu.task.ActiveUserService;
@@ -50,12 +48,8 @@ class ActiveUserTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.createCriteria();
-        questionMapper.deleteByExample(questionExample);
-        AnswerExample answerExample = new AnswerExample();
-        answerExample.createCriteria();
-        answerMapper.deleteByExample(answerExample);
+        cleanUpQuestions();
+        cleanUpAnswers();
     }
 
     @Test

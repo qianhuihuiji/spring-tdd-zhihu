@@ -2,11 +2,10 @@ package com.nofirst.spring.tdd.zhihu.integration.users;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nofirst.spring.tdd.zhihu.common.ResultCode;
-import com.nofirst.spring.tdd.zhihu.factory.UserRegisterDtoFactory;
+import com.nofirst.spring.tdd.zhihu.factory.UserFactory;
 import com.nofirst.spring.tdd.zhihu.integration.BaseContainerTest;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.User;
-import com.nofirst.spring.tdd.zhihu.mbg.model.UserExample;
 import com.nofirst.spring.tdd.zhihu.model.dto.UserLoginDto;
 import com.nofirst.spring.tdd.zhihu.model.dto.UserRegisterDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,16 +34,13 @@ class UserAuthTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        // 只删除测试创建的用户（id > 3），保留初始化的 3 个用户（Jane、John、Foo）
-        UserExample example = new UserExample();
-        example.createCriteria().andIdGreaterThan(3);
-        userMapper.deleteByExample(example);
+        cleanUpUsersExceptDefault();
     }
 
     @Test
     void guests_can_register_with_valid_credentials() throws Exception {
         // given
-        UserRegisterDto registerDto = UserRegisterDtoFactory.createUserRegisterDto();
+        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
 
         // when
         this.mockMvc.perform(post("/auth/register")
@@ -63,16 +57,11 @@ class UserAuthTest extends BaseContainerTest {
     void guests_can_not_register_with_duplicate_username() throws Exception {
         // given
         // 先创建一个用户
-        User existingUser = new User();
-        existingUser.setName("existingUser");
-        existingUser.setPhone("13800138001");
-        existingUser.setEmail("existing@qq.com");
-        existingUser.setPassword(passwordEncoder.encode("password123"));
-        existingUser.setCreatedAt(new Date());
-        existingUser.setUpdatedAt(new Date());
+        User existingUser = UserFactory.createUser();
         userMapper.insertSelective(existingUser);
 
-        UserRegisterDto registerDto = UserRegisterDtoFactory.createUserRegisterDtoWithName("existingUser");
+        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
+        registerDto.setName(existingUser.getName());
 
         // when & then
         this.mockMvc.perform(post("/auth/register")
@@ -86,7 +75,7 @@ class UserAuthTest extends BaseContainerTest {
     @Test
     void guests_can_not_register_with_blank_name() throws Exception {
         // given
-        UserRegisterDto registerDto = UserRegisterDtoFactory.createUserRegisterDto();
+        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
         registerDto.setName("");
 
         // when
@@ -102,7 +91,7 @@ class UserAuthTest extends BaseContainerTest {
     @Test
     void guests_can_not_register_with_invalid_phone() throws Exception {
         // given
-        UserRegisterDto registerDto = UserRegisterDtoFactory.createUserRegisterDto();
+        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
         registerDto.setPhone("12345678901");
 
         // when
@@ -118,7 +107,7 @@ class UserAuthTest extends BaseContainerTest {
     @Test
     void guests_can_not_register_with_invalid_email() throws Exception {
         // given
-        UserRegisterDto registerDto = UserRegisterDtoFactory.createUserRegisterDto();
+        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
         registerDto.setEmail("invalid-email");
 
         // when
@@ -134,7 +123,7 @@ class UserAuthTest extends BaseContainerTest {
     @Test
     void guests_can_not_register_with_invalid_password() throws Exception {
         // given
-        UserRegisterDto registerDto = UserRegisterDtoFactory.createUserRegisterDto();
+        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
         registerDto.setPassword("123");
 
         // when
@@ -151,13 +140,9 @@ class UserAuthTest extends BaseContainerTest {
     void guests_can_login_with_correct_credentials() throws Exception {
         // given
         // 先创建一个用户（使用已知的密码）
-        User user = new User();
+        User user = UserFactory.createUser();
         user.setName("loginUser");
-        user.setPhone("13800138002");
-        user.setEmail("loginuser@qq.com");
         user.setPassword(passwordEncoder.encode("password123"));
-        user.setCreatedAt(new Date());
-        user.setUpdatedAt(new Date());
         userMapper.insertSelective(user);
 
         UserLoginDto loginDto = new UserLoginDto();
@@ -202,13 +187,9 @@ class UserAuthTest extends BaseContainerTest {
     void guests_can_not_login_with_wrong_password() throws Exception {
         // given
         // 先创建一个用户
-        User user = new User();
-        user.setName("wrongPassUser");
-        user.setPhone("13800138003");
-        user.setEmail("wrongpass@qq.com");
+        User user = UserFactory.createUser();
+        user.setName("correctUser");
         user.setPassword(passwordEncoder.encode("correctPassword"));
-        user.setCreatedAt(new Date());
-        user.setUpdatedAt(new Date());
         userMapper.insertSelective(user);
 
         UserLoginDto loginDto = new UserLoginDto();
@@ -259,13 +240,9 @@ class UserAuthTest extends BaseContainerTest {
     void authenticated_users_can_logout() throws Exception {
         // given
         // 先登录获取 Token
-        User user = new User();
+        User user = UserFactory.createUser();
         user.setName("logoutUser");
-        user.setPhone("13800138004");
-        user.setEmail("logoutuser@qq.com");
         user.setPassword(passwordEncoder.encode("password123"));
-        user.setCreatedAt(new Date());
-        user.setUpdatedAt(new Date());
         userMapper.insertSelective(user);
 
         UserLoginDto loginDto = new UserLoginDto();

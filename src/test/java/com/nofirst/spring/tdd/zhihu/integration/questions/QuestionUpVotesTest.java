@@ -53,12 +53,8 @@ class QuestionUpVotesTest extends AbstractVoteUpTest {
 
     @BeforeEach
     public void setupTestData() {
-        VoteExample voteExample = new VoteExample();
-        voteExample.createCriteria();
-        voteMapper.deleteByExample(voteExample);
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.createCriteria();
-        questionMapper.deleteByExample(questionExample);
+        cleanUpVotes();
+        cleanUpQuestions();
     }
 
     @Test

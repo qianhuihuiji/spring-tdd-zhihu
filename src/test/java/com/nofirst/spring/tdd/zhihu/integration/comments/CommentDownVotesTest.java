@@ -58,12 +58,8 @@ class CommentDownVotesTest extends AbstractVoteDownTest {
 
     @BeforeEach
     public void setupTestData() {
-        VoteExample voteExample = new VoteExample();
-        voteExample.createCriteria();
-        voteMapper.deleteByExample(voteExample);
-        CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria();
-        commentMapper.deleteByExample(commentExample);
+        cleanUpVotes();
+        cleanUpComments();
     }
 
     @Test

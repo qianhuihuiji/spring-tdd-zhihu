@@ -50,9 +50,7 @@ class NotificationsTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        NotificationExample example = new NotificationExample();
-        example.createCriteria();
-        notificationMapper.deleteByExample(example);
+        cleanUpNotifications();
     }
 
     @Test

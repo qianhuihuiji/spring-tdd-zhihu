@@ -54,12 +54,8 @@ class QuestionDownVotesTest extends AbstractVoteDownTest {
 
     @BeforeEach
     public void setupTestData() {
-        VoteExample voteExample = new VoteExample();
-        voteExample.createCriteria();
-        voteMapper.deleteByExample(voteExample);
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.createCriteria();
-        questionMapper.deleteByExample(questionExample);
+        cleanUpQuestions();
+        cleanUpVotes();
     }
 
     @Test

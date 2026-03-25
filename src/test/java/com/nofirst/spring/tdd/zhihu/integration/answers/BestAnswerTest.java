@@ -32,15 +32,8 @@ class BestAnswerTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        QuestionExample questionExample = new QuestionExample();
-        // 空条件，匹配所有数据，等价于delete * from question
-        questionExample.createCriteria();
-        questionMapper.deleteByExample(questionExample);
-
-        AnswerExample answerExample = new AnswerExample();
-        // 空条件，匹配所有数据，等价于delete * from answer
-        answerExample.createCriteria();
-        answerMapper.deleteByExample(answerExample);
+       cleanUpQuestions();
+       cleanUpAnswers();
     }
 
     @Test

@@ -11,7 +11,11 @@
       "Bash(git checkout *)",
       "Bash(scripts\\run-test.cmd)",
       "Bash(d:\\study\\code\\spring-tdd-zhihu\\scripts\\run-test.cmd)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(mvn *)",
+      "Bash(d:\\study\\code\\spring-tdd-zhihu\\scripts\\generate.cmd)",
+      "Bash(d:\\study\\code\\spring-tdd-zhihu\\scripts\\migrate.cmd)",
+      "Bash(d:\\study\\code\\spring-tdd-zhihu\\scripts\\run-test.cmd *)"
     ]
   },
   "$version": 3

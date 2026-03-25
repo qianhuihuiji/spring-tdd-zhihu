@@ -39,7 +39,7 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.nofirst.spring.tdd.zhihu.mbg.mapper"
                              targetProject="src\main\java"/>
         <!--生成全部表tableName设为%-->
-        <table tableName="activity">
+        <table tableName="email_verification">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>

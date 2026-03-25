@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper">
-  <resultMap id="BaseResultMap" type="com.nofirst.spring.tdd.zhihu.mbg.model.User">
+<mapper namespace="com.nofirst.spring.tdd.zhihu.mbg.mapper.EmailVerificationMapper">
+  <resultMap id="BaseResultMap" type="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerification">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="verified_at" jdbcType="TIMESTAMP" property="verifiedAt" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
-    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
-    <result column="email_verified_at" jdbcType="TIMESTAMP" property="emailVerifiedAt" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,15 +68,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, phone, email, password, created_at, updated_at, email_verified_at
+    id, user_id, code, email, verified_at, created_at
   </sql>
-  <select id="selectByExample" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.UserExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerificationExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from user
+    from email_verification
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -89,114 +87,94 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from user
+    from email_verification
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from user
+    delete from email_verification
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.UserExample">
-    delete from user
+  <delete id="deleteByExample" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerificationExample">
+    delete from email_verification
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.User">
+  <insert id="insert" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerification">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into user (name, phone, email, 
-      password, created_at, updated_at, 
-      email_verified_at)
-    values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, 
-      #{emailVerifiedAt,jdbcType=TIMESTAMP})
+    insert into email_verification (user_id, code, email, 
+      verified_at, created_at)
+    values (#{userId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{verifiedAt,jdbcType=TIMESTAMP}, #{createdAt,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.User">
+  <insert id="insertSelective" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerification">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into user
+    insert into email_verification
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        name,
+      <if test="userId != null">
+        user_id,
       </if>
-      <if test="phone != null">
-        phone,
+      <if test="code != null">
+        code,
       </if>
       <if test="email != null">
         email,
       </if>
-      <if test="password != null">
-        password,
+      <if test="verifiedAt != null">
+        verified_at,
       </if>
       <if test="createdAt != null">
         created_at,
       </if>
-      <if test="updatedAt != null">
-        updated_at,
-      </if>
-      <if test="emailVerifiedAt != null">
-        email_verified_at,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
       </if>
-      <if test="phone != null">
-        #{phone,jdbcType=VARCHAR},
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
       </if>
-      <if test="password != null">
-        #{password,jdbcType=VARCHAR},
+      <if test="verifiedAt != null">
+        #{verifiedAt,jdbcType=TIMESTAMP},
       </if>
       <if test="createdAt != null">
         #{createdAt,jdbcType=TIMESTAMP},
       </if>
-      <if test="updatedAt != null">
-        #{updatedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="emailVerifiedAt != null">
-        #{emailVerifiedAt,jdbcType=TIMESTAMP},
-      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.UserExample" resultType="java.lang.Long">
-    select count(*) from user
+  <select id="countByExample" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerificationExample" resultType="java.lang.Long">
+    select count(*) from email_verification
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update user
+    update email_verification
     <set>
       <if test="row.id != null">
         id = #{row.id,jdbcType=INTEGER},
       </if>
-      <if test="row.name != null">
-        name = #{row.name,jdbcType=VARCHAR},
+      <if test="row.userId != null">
+        user_id = #{row.userId,jdbcType=INTEGER},
       </if>
-      <if test="row.phone != null">
-        phone = #{row.phone,jdbcType=VARCHAR},
+      <if test="row.code != null">
+        code = #{row.code,jdbcType=VARCHAR},
       </if>
       <if test="row.email != null">
         email = #{row.email,jdbcType=VARCHAR},
       </if>
-      <if test="row.password != null">
-        password = #{row.password,jdbcType=VARCHAR},
+      <if test="row.verifiedAt != null">
+        verified_at = #{row.verifiedAt,jdbcType=TIMESTAMP},
       </if>
       <if test="row.createdAt != null">
         created_at = #{row.createdAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="row.updatedAt != null">
-        updated_at = #{row.updatedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="row.emailVerifiedAt != null">
-        email_verified_at = #{row.emailVerifiedAt,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="example != null">
@@ -204,55 +182,45 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update user
+    update email_verification
     set id = #{row.id,jdbcType=INTEGER},
-      name = #{row.name,jdbcType=VARCHAR},
-      phone = #{row.phone,jdbcType=VARCHAR},
+      user_id = #{row.userId,jdbcType=INTEGER},
+      code = #{row.code,jdbcType=VARCHAR},
       email = #{row.email,jdbcType=VARCHAR},
-      password = #{row.password,jdbcType=VARCHAR},
-      created_at = #{row.createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{row.updatedAt,jdbcType=TIMESTAMP},
-      email_verified_at = #{row.emailVerifiedAt,jdbcType=TIMESTAMP}
+      verified_at = #{row.verifiedAt,jdbcType=TIMESTAMP},
+      created_at = #{row.createdAt,jdbcType=TIMESTAMP}
     <if test="example != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.User">
-    update user
+  <update id="updateByPrimaryKeySelective" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerification">
+    update email_verification
     <set>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
       </if>
-      <if test="phone != null">
-        phone = #{phone,jdbcType=VARCHAR},
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},
       </if>
-      <if test="password != null">
-        password = #{password,jdbcType=VARCHAR},
+      <if test="verifiedAt != null">
+        verified_at = #{verifiedAt,jdbcType=TIMESTAMP},
       </if>
       <if test="createdAt != null">
         created_at = #{createdAt,jdbcType=TIMESTAMP},
       </if>
-      <if test="updatedAt != null">
-        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="emailVerifiedAt != null">
-        email_verified_at = #{emailVerifiedAt,jdbcType=TIMESTAMP},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.User">
-    update user
-    set name = #{name,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=VARCHAR},
+  <update id="updateByPrimaryKey" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerification">
+    update email_verification
+    set user_id = #{userId,jdbcType=INTEGER},
+      code = #{code,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
-      email_verified_at = #{emailVerifiedAt,jdbcType=TIMESTAMP}
+      verified_at = #{verifiedAt,jdbcType=TIMESTAMP},
+      created_at = #{createdAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

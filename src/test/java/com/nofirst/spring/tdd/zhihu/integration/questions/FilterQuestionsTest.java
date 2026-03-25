@@ -39,9 +39,7 @@ class FilterQuestionsTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        QuestionExample example = new QuestionExample();
-        example.createCriteria();
-        questionMapper.deleteByExample(example);
+        cleanUpQuestions();
     }
 
     @Test

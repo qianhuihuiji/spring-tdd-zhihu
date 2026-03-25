@@ -29,12 +29,8 @@ class SubscribeQuestionsTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        SubscriptionExample subscriptionExample = new SubscriptionExample();
-        subscriptionExample.createCriteria();
-        subscriptionMapper.deleteByExample(subscriptionExample);
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.createCriteria();
-        questionMapper.deleteByExample(questionExample);
+        cleanUpSubscriptions();
+        cleanUpQuestions();
     }
 
     @Test

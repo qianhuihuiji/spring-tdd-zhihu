@@ -32,12 +32,8 @@ class InviteUserTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        QuestionExample example = new QuestionExample();
-        example.createCriteria();
-        questionMapper.deleteByExample(example);
-        NotificationExample notificationExample = new NotificationExample();
-        notificationExample.createCriteria();
-        notificationMapper.deleteByExample(notificationExample);
+        cleanUpQuestions();
+        cleanUpNotifications();
     }
 
     @Test

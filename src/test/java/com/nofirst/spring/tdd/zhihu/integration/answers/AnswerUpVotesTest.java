@@ -48,12 +48,8 @@ class AnswerUpVotesTest extends AbstractVoteUpTest {
 
     @BeforeEach
     public void setupTestData() {
-        VoteExample voteExample = new VoteExample();
-        voteExample.createCriteria();
-        voteMapper.deleteByExample(voteExample);
-        AnswerExample answerExample = new AnswerExample();
-        answerExample.createCriteria();
-        answerMapper.deleteByExample(answerExample);
+        cleanUpVotes();
+        cleanUpAnswers();
     }
 
     @Override

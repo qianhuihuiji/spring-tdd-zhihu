@@ -33,12 +33,8 @@ class AnswerCommentsTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        AnswerExample example = new AnswerExample();
-        example.createCriteria();
-        answerMapper.deleteByExample(example);
-        CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria();
-        commentMapper.deleteByExample(commentExample);
+        cleanUpAnswers();
+        cleanUpComments();
     }
 
     @Test

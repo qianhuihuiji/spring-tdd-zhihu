@@ -33,9 +33,7 @@ class ViewAnswersTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        AnswerExample example = new AnswerExample();
-        example.createCriteria();
-        answerMapper.deleteByExample(example);
+        cleanUpAnswers();
     }
 
     @Test

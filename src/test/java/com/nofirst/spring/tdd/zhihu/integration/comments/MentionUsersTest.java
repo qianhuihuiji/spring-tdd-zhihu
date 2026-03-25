@@ -41,10 +41,7 @@ class MentionUsersTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        // 清空通知表
-        NotificationExample notificationExample = new NotificationExample();
-        notificationExample.createCriteria();
-        notificationMapper.deleteByExample(notificationExample);
+        cleanUpNotifications();
     }
 
     @Test

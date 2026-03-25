@@ -50,18 +50,9 @@ class ViewCommentsTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.createCriteria();
-        questionMapper.deleteByExample(questionExample);
-
-        AnswerExample answerExample = new AnswerExample();
-        answerExample.createCriteria();
-        answerMapper.deleteByExample(answerExample);
-
-        CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria();
-        commentMapper.deleteByExample(commentExample);
+        cleanUpQuestions();
+        cleanUpAnswers();
+        cleanUpComments();
     }
 
     @Test

@@ -29,7 +29,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        CommonResult<String> resultDTO = CommonResult.error("请先登录");
+        String message = "请先登录";
+        // 检查原始异常或其原因是否是 EmailNotVerifiedException
+        if (e instanceof EmailNotVerifiedException || (e.getCause() != null && e.getCause() instanceof EmailNotVerifiedException)) {
+            message = "请先验证邮箱";
+        }
+
+        CommonResult<String> resultDTO = CommonResult.error(message);
 
         ServletOutputStream outputStream = httpServletResponse.getOutputStream();
         outputStream.write(objectMapper.writeValueAsString(resultDTO).getBytes(StandardCharsets.UTF_8));
