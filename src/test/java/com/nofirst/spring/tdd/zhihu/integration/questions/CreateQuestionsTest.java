@@ -8,19 +8,21 @@ import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Question;
 import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.model.dto.QuestionDto;
+import com.nofirst.spring.tdd.zhihu.service.TranslatorService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,9 +36,13 @@ class CreateQuestionsTest extends BaseContainerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private TranslatorService translatorService;
+
     @BeforeEach
     public void setupTestData() {
         cleanUpQuestions();
+        when(translatorService.translate(anyString())).thenReturn("english-english");
     }
 
     @Test
@@ -142,7 +148,6 @@ class CreateQuestionsTest extends BaseContainerTest {
     }
 
     @Test
-    @Tag("online")
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void get_slug_when_create_a_question() throws Exception {
         // given
@@ -151,10 +156,6 @@ class CreateQuestionsTest extends BaseContainerTest {
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria();
         long beforeCount = questionMapper.countByExample(questionExample);
-
-        // 百度翻译的接口有频率限制，在an_authenticated_user_can_create_new_questions用例中也会调用翻译接口
-        // 所以可以给an_authenticated_user_can_create_new_questions用例打上@Tag("online")标签，测试全部用例时排除掉
-        TimeUnit.SECONDS.sleep(3);
 
         // when
         this.mockMvc.perform(post("/questions")
@@ -165,9 +166,8 @@ class CreateQuestionsTest extends BaseContainerTest {
                 .andExpect(jsonPath("$.code").value(ResultCode.SUCCESS.getCode()));
 
         await()
-                .pollInterval(Duration.ofSeconds(3))
-                // 依赖于实际的时间，时间设大一点是为了让kafka消费到消息
-                .atMost(10, SECONDS)
+                .pollInterval(Duration.ofSeconds(1))
+                .atMost(5, SECONDS)
                 .untilAsserted(() -> {
                     // then
                     long afterCount = questionMapper.countByExample(questionExample);

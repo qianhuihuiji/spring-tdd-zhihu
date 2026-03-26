@@ -1,9 +1,12 @@
 package com.nofirst.spring.tdd.zhihu.integration;
 
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import com.nofirst.spring.tdd.zhihu.SpringTddZhihuApplication;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.ActivityMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.AnswerMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.CommentMapper;
+import com.nofirst.spring.tdd.zhihu.mbg.mapper.EmailVerificationMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.NotificationMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.SubscriptionMapper;
@@ -12,6 +15,7 @@ import com.nofirst.spring.tdd.zhihu.mbg.mapper.VoteMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.ActivityExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.AnswerExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.CommentExample;
+import com.nofirst.spring.tdd.zhihu.mbg.model.EmailVerificationExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.NotificationExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.SubscriptionExample;
@@ -46,6 +50,9 @@ public abstract class BaseContainerTest {
                     .withExposedPorts(6379)
                     .withReuse(true);
 
+    // GreenMail 测试邮件服务器 - 使用静态实例以便在 @DynamicPropertySource 中访问
+    public static final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP);
+
     static {
         // 复用配置
         TestcontainersConfiguration.getInstance().updateUserConfig("testcontainers.reuse.enable", "true");
@@ -53,6 +60,10 @@ public abstract class BaseContainerTest {
         mysqlContainer.start();
         kafkaContainer.start();
         redisContainer.start();
+
+        // 在 GreenMail 中创建用户账户
+        greenMail.setUser("noreply@example.com", "test-password");
+        greenMail.start();
     }
 
     @Autowired
@@ -73,6 +84,8 @@ public abstract class BaseContainerTest {
     private UserMapper userMapper;
     @Autowired
     private ActivityMapper activityMapper;
+    @Autowired
+    private EmailVerificationMapper emailVerificationMapper;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -85,6 +98,15 @@ public abstract class BaseContainerTest {
 
         registry.add("spring.data.redis.host", redisContainer::getHost);
         registry.add("spring.data.redis.port", redisContainer::getFirstMappedPort);
+
+        // 配置邮件服务器使用 GreenMail 测试服务器
+        // 注意：GreenMail 不支持 SSL，需要禁用 SSL 配置，并启用认证
+        registry.add("spring.mail.host", () -> greenMail.getSmtp().getBindTo());
+        registry.add("spring.mail.port", () -> greenMail.getSmtp().getPort());
+        registry.add("spring.mail.username", () -> "noreply@example.com");
+        registry.add("spring.mail.password", () -> "test-password");
+        registry.add("spring.mail.properties.mail.smtp.ssl.enable", () -> "false");
+        registry.add("spring.mail.properties.mail.smtp.starttls.enable", () -> "false");
     }
 
     protected void cleanUpQuestions() {
@@ -134,6 +156,13 @@ public abstract class BaseContainerTest {
         ActivityExample example = new ActivityExample();
         example.createCriteria();
         activityMapper.deleteByExample(example);
+    }
+
+    protected void cleanUpEmailVerifications() {
+        EmailVerificationExample example =
+                new EmailVerificationExample();
+        example.createCriteria();
+        emailVerificationMapper.deleteByExample(example);
     }
 
 
