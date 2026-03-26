@@ -7,7 +7,6 @@ import com.nofirst.spring.tdd.zhihu.integration.BaseContainerTest;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.User;
 import com.nofirst.spring.tdd.zhihu.model.dto.UserLoginDto;
-import com.nofirst.spring.tdd.zhihu.model.dto.UserRegisterDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class UserAuthTest extends BaseContainerTest {
+class UserLoginTest extends BaseContainerTest {
 
     @Autowired
     private UserMapper userMapper;
@@ -35,105 +34,6 @@ class UserAuthTest extends BaseContainerTest {
     @BeforeEach
     public void setupTestData() {
         cleanUpUsersExceptDefault();
-    }
-
-    @Test
-    void guests_can_register_with_valid_credentials() throws Exception {
-        // given
-        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
-
-        // when
-        this.mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerDto)))
-                // then
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data").value("注册成功"));
-    }
-
-    @Test
-    void guests_can_not_register_with_duplicate_username() throws Exception {
-        // given
-        // 先创建一个用户
-        User existingUser = UserFactory.createUser();
-        userMapper.insertSelective(existingUser);
-
-        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
-        registerDto.setName(existingUser.getName());
-
-        // when & then
-        this.mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.FAILED.getCode()))
-                .andExpect(jsonPath("$.message").value("用户名已存在"));
-    }
-
-    @Test
-    void guests_can_not_register_with_blank_name() throws Exception {
-        // given
-        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
-        registerDto.setName("");
-
-        // when
-        this.mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerDto)))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.VALIDATE_FAILED.getCode()))
-                .andExpect(jsonPath("$.message").value("用户名不能为空"));
-    }
-
-    @Test
-    void guests_can_not_register_with_invalid_phone() throws Exception {
-        // given
-        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
-        registerDto.setPhone("12345678901");
-
-        // when
-        this.mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerDto)))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.VALIDATE_FAILED.getCode()))
-                .andExpect(jsonPath("$.message").value("手机号格式不正确"));
-    }
-
-    @Test
-    void guests_can_not_register_with_invalid_email() throws Exception {
-        // given
-        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
-        registerDto.setEmail("invalid-email");
-
-        // when
-        this.mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerDto)))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.VALIDATE_FAILED.getCode()))
-                .andExpect(jsonPath("$.message").value("邮箱格式不正确"));
-    }
-
-    @Test
-    void guests_can_not_register_with_invalid_password() throws Exception {
-        // given
-        UserRegisterDto registerDto = UserFactory.createUserRegisterDto();
-        registerDto.setPassword("123");
-
-        // when
-        this.mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerDto)))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.VALIDATE_FAILED.getCode()))
-                .andExpect(jsonPath("$.message").value("密码必须是 6-20 位字母、数字或特殊字符"));
     }
 
     @Test
