@@ -10,6 +10,7 @@
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
     <result column="email_verified_at" jdbcType="TIMESTAMP" property="emailVerifiedAt" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, phone, email, password, created_at, updated_at, email_verified_at
+    id, name, phone, email, password, created_at, updated_at, email_verified_at, avatar
   </sql>
   <select id="selectByExample" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.UserExample" resultMap="BaseResultMap">
     select
@@ -108,10 +109,10 @@
     </selectKey>
     insert into user (name, phone, email, 
       password, created_at, updated_at, 
-      email_verified_at)
+      email_verified_at, avatar)
     values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{password,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, 
-      #{emailVerifiedAt,jdbcType=TIMESTAMP})
+      #{emailVerifiedAt,jdbcType=TIMESTAMP}, #{avatar,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.nofirst.spring.tdd.zhihu.mbg.model.User">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -140,6 +141,9 @@
       <if test="emailVerifiedAt != null">
         email_verified_at,
       </if>
+      <if test="avatar != null">
+        avatar,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
@@ -162,6 +166,9 @@
       </if>
       <if test="emailVerifiedAt != null">
         #{emailVerifiedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -197,6 +204,9 @@
       </if>
       <if test="row.emailVerifiedAt != null">
         email_verified_at = #{row.emailVerifiedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="row.avatar != null">
+        avatar = #{row.avatar,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="example != null">
@@ -241,6 +251,9 @@
       <if test="emailVerifiedAt != null">
         email_verified_at = #{emailVerifiedAt,jdbcType=TIMESTAMP},
       </if>
+      <if test="avatar != null">
+        avatar = #{avatar,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -252,7 +265,8 @@
       password = #{password,jdbcType=VARCHAR},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP},
-      email_verified_at = #{emailVerifiedAt,jdbcType=TIMESTAMP}
+      email_verified_at = #{emailVerifiedAt,jdbcType=TIMESTAMP},
+      avatar = #{avatar,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

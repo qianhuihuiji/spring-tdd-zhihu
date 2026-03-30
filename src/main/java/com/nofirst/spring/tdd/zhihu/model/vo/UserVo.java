@@ -13,4 +13,6 @@ public class UserVo {
     private String phone;
 
     private String email;
+
+    private String avatar;
 }

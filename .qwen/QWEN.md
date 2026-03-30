@@ -2,9 +2,11 @@
 
 ## 项目概述
 
-这是一个使用 **TDD（测试驱动开发）** 方式构建的仿知乎论坛项目。项目基于 Spring Boot 3.0.6，采用 Java 17 作为开发语言，遵循约定大于配置的原则，已集成开发所需的核心依赖和公共组件。
+这是一个使用 **TDD（测试驱动开发）** 方式构建的仿知乎论坛项目。项目基于 Spring Boot 3.0.6，采用 Java 17
+作为开发语言，遵循约定大于配置的原则，已集成开发所需的核心依赖和公共组件。
 
 **主要技术栈：**
+
 - **框架**: Spring Boot 3.0.6
 - **语言**: Java 17
 - **ORM**: MyBatis + MyBatis Generator
@@ -42,6 +44,7 @@
 ## 核心功能
 
 ### 1. 用户认证系统
+
 - **JWT Token 认证**: 基于 JWT 的无状态认证机制
 - **注册接口**: `POST /auth/register` - 用户注册（密码自动 BCrypt 加密）
 - **登录接口**: `POST /auth/login` - 用户登录，返回 JWT Token
@@ -49,6 +52,7 @@
 - **密码加密**: 使用 BCrypt 进行密码加密存储（不可逆）
 
 ### 2. 内容管理系统
+
 - **问题管理**: 发布、查看问题
 - **答案管理**: 发布、查看答案
 - **评论系统**: 对问题和答案进行评论
@@ -58,30 +62,36 @@
 - **订阅系统**: 问题订阅功能
 
 ### 3. 数据库管理
+
 - **Flyway 版本控制**: 数据库结构版本化管理
 - **多表设计**: 包含用户、问题、答案、评论、投票、分类等表
 - **初始化数据**: 预置测试数据
 
 ### 4. 测试支持
+
 - **Testcontainers**: 使用 Docker 容器进行集成测试
 - **BaseContainerTest**: 集成测试基类，自动启动 MySQL、Kafka、Redis 容器
 
 ## 开发约定
 
 ### 代码结构
+
 - Controller 层负责处理 HTTP 请求和响应
 - Service 层负责业务逻辑处理
 - Model 层定义数据传输对象
 - MBG (MyBatis Generator) 生成的数据访问层
 - Security 模块处理认证和授权
+- 必须：使用构造器注入依赖
 
 ### 测试实践
+
 - 单元测试位于 `src/test/java/com/nofirst/spring/tdd/zhihu/unit`
 - 集成测试位于 `src/test/java/com/nofirst/spring/tdd/zhihu/integration`
 - 使用 Testcontainers 进行真实环境的集成测试
 - 遵循 TDD 实践，先写测试再实现功能
 
 ### 数据库迁移
+
 - 使用 Flyway 进行数据库版本控制
 - 迁移脚本位于 `src/main/resources/db/migration`
 - 命名规范：`V版本号__描述.sql`
@@ -89,12 +99,14 @@
 ## 构建和运行
 
 ### 环境要求
+
 - JDK 17+
 - Maven 3.6+
 - MySQL 8.0+
 - Docker（用于运行测试）
 
 ### 构建命令
+
 ```bash
 # 编译项目
 mvn clean compile
@@ -116,6 +128,7 @@ mvn mybatis-generator:generate
 ```
 
 ### 配置说明
+
 - 数据库连接配置在 `application.yaml`
 - JWT 密钥和过期时间可通过配置文件设置
 - Kafka 和 Redis 配置也在 `application.yaml` 中
@@ -133,17 +146,19 @@ mvn mybatis-generator:generate
 ```
 
 ### 常用状态码
-| 状态码 | 说明 |
-|--------|------|
-| 200 | 成功 |
-| 400 | 参数验证失败 |
+
+| 状态码 | 说明           |
+|-----|--------------|
+| 200 | 成功           |
+| 400 | 参数验证失败       |
 | 401 | 未登录/Token 无效 |
-| 403 | 未授权 |
-| 500 | 服务器错误 |
+| 403 | 未授权          |
+| 500 | 服务器错误        |
 
 ## 测试策略
 
 ### 测试框架
+
 - **JUnit 5** (`org.junit.jupiter.api.*`)
 - **AssertJ** (`org.assertj.core.api.Assertions`) - 流畅式断言
 - **Mockito** (`org.mockito.*`) - 依赖模拟
@@ -151,6 +166,7 @@ mvn mybatis-generator:generate
 - **Awaitility** - 异步测试等待
 
 ### 测试目录结构
+
 ```
 src/test/java/com/nofirst/spring/tdd/zhihu/
 ├── integration/    # 集成测试
@@ -169,11 +185,11 @@ src/test/java/com/nofirst/spring/tdd/zhihu/
 
 ### 测试类命名规范
 
-| 类型 | 命名模式 | 示例 |
-|------|----------|------|
-| **集成测试** | `*Test` | `CreateQuestionsTest`, `PostAnswersTest` |
-| **单元测试** | `*Test` | `QuestionPolicyTest`, `QuestionServiceImplTest` |
-| **抽象测试基类** | `Base*` 或 `Abstract*` | `BaseContainerTest`, `AbstractVoteUpTest` |
+| 类型         | 命名模式                  | 示例                                              |
+|------------|-----------------------|-------------------------------------------------|
+| **集成测试**   | `*Test`               | `CreateQuestionsTest`, `PostAnswersTest`        |
+| **单元测试**   | `*Test`               | `QuestionPolicyTest`, `QuestionServiceImplTest` |
+| **抽象测试基类** | `Base*` 或 `Abstract*` | `BaseContainerTest`, `AbstractVoteUpTest`       |
 
 ### 测试方法命名规范
 
@@ -185,10 +201,15 @@ src/test/java/com/nofirst/spring/tdd/zhihu/
 ```java
 // 示例
 void guests_may_not_create_questions()
+
 void an_authenticated_user_can_create_new_questions()
+
 void title_is_required()
+
 void signed_in_user_can_post_an_answer_to_a_published_question()
+
 void can_not_post_an_answer_to_an_unpublished_question()
+
 void a_notification_is_prepared_when_a_subscribed_question_receives_a_new_answer_by_other_people()
 ```
 
@@ -197,6 +218,7 @@ void a_notification_is_prepared_when_a_subscribed_question_receives_a_new_answer
 **标准结构：given-when-then 三段式**
 
 ```java
+
 @Test
 void an_authenticated_user_can_create_new_questions() throws Exception {
     // given
@@ -207,11 +229,11 @@ void an_authenticated_user_can_create_new_questions() throws Exception {
 
     // when
     this.mockMvc.perform(post("/questions")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(questionDto)))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.code").value(ResultCode.SUCCESS.getCode()));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(questionDto)))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(ResultCode.SUCCESS.getCode()));
 
     // then
     long afterCount = questionMapper.countByExample(example);
@@ -226,9 +248,11 @@ void an_authenticated_user_can_create_new_questions() throws Exception {
 ```java
 // QuestionFactory.java
 public class QuestionFactory {
-    public static Question createPublishedQuestion() { ... }
-    public static Question createUnpublishedQuestion() { ... }
-    public static QuestionDto createQuestionDto() { ... }
+    public static Question createPublishedQuestion() { ...}
+
+    public static Question createUnpublishedQuestion() { ...}
+
+    public static QuestionDto createQuestionDto() { ...}
 }
 
 // 使用示例
@@ -239,6 +263,7 @@ Answer answer = AnswerFactory.createAnswer(question.getId());
 **测试清理**：使用 `@BeforeEach` 清理数据
 
 ```java
+
 @BeforeEach
 public void setupTestData() {
     QuestionExample example = new QuestionExample();
@@ -254,24 +279,47 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 // 基本断言
-assertThat(afterCount - beforeCount).isEqualTo(1);
-assertThat(questionOwner).isTrue();
-assertThat(users).isEmpty();
 
-// 异常断言
-assertThatThrownBy(() -> {
-    questionPolicy.canMarkAnswerAsBest(1, accountUser);
-}).isInstanceOf(AnswerNotExistedException.class)
-  .hasMessageContaining("answer not exist");
+assertThat(afterCount -beforeCount).
 
-// 集合断言
-assertThat(users).containsExactly("Jane", "Foo");
-assertThat(votes).size().isEqualTo(1);
+        isEqualTo(1);
+
+        assertThat(questionOwner).
+
+        isTrue();
+
+        assertThat(users).
+
+        isEmpty();
+
+        // 异常断言
+        assertThatThrownBy(() ->{
+        questionPolicy.
+
+        canMarkAnswerAsBest(1,accountUser);
+}).
+
+        isInstanceOf(AnswerNotExistedException .class)
+  .
+
+        hasMessageContaining("answer not exist");
+
+        // 集合断言
+        assertThat(users).
+
+        containsExactly("Jane","Foo");
+
+        assertThat(votes).
+
+        size().
+
+        isEqualTo(1);
 ```
 
 ### 单元测试规范
 
 ```java
+
 @ExtendWith(MockitoExtension.class)
 class QuestionPolicyTest {
 
@@ -280,7 +328,7 @@ class QuestionPolicyTest {
 
     @Mock
     private AnswerMapper answerMapper;
-    
+
     @Mock
     private QuestionMapper questionMapper;
 
@@ -289,8 +337,8 @@ class QuestionPolicyTest {
         // given
         Question publishedQuestion = QuestionFactory.createPublishedQuestion();
         given(questionMapper.selectByPrimaryKey(publishedQuestion.getId()))
-            .willReturn(publishedQuestion);
-        
+                .willReturn(publishedQuestion);
+
         // when & then
         boolean result = questionPolicy.canMarkAnswerAsBest(publishedQuestion.getId(), accountUser);
         assertThat(result).isTrue();
@@ -301,6 +349,7 @@ class QuestionPolicyTest {
 ### 集成测试规范
 
 ```java
+
 @SpringBootTest(classes = SpringTddZhihuApplication.class)
 @AutoConfigureMockMvc
 public abstract class BaseContainerTest {
@@ -314,7 +363,7 @@ class CreateQuestionsTest extends BaseContainerTest {
 
     @Autowired
     private QuestionMapper questionMapper;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -329,6 +378,7 @@ class CreateQuestionsTest extends BaseContainerTest {
 ### Testcontainers 配置
 
 ```java
+
 @SpringBootTest(classes = SpringTddZhihuApplication.class)
 @AutoConfigureMockMvc
 public abstract class BaseContainerTest {
@@ -368,27 +418,30 @@ public abstract class BaseContainerTest {
 ### 异步测试处理 (Awaitility)
 
 ```java
+
 @Test
 @Tag("online")
 @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
 void get_slug_when_create_a_question() throws Exception {
     // ...
-    
+
     await()
-        .pollInterval(Duration.ofSeconds(3))
-        .atMost(10, SECONDS)
-        .untilAsserted(() -> {
-            long afterCount = questionMapper.countByExample(questionExample);
-            assertThat(afterCount - beforeCount).isEqualTo(1);
-        });
+            .pollInterval(Duration.ofSeconds(3))
+            .atMost(10, SECONDS)
+            .untilAsserted(() -> {
+                long afterCount = questionMapper.countByExample(questionExample);
+                assertThat(afterCount - beforeCount).isEqualTo(1);
+            });
 }
 ```
 
 ### 测试标签
 
 ```java
+
 @Test
-@Tag("online")  // 标记需要访问外部服务的测试
+@Tag("online")
+    // 标记需要访问外部服务的测试
 void can_translate_chinese_to_english() {
     // 百度翻译接口测试
 }
@@ -401,15 +454,16 @@ void can_translate_chinese_to_english() {
 ```java
 // 抽象基类
 public abstract class AbstractVoteUpTest extends AbstractVoteTest {
-    
+
     @Test
-    void guest_can_not_vote_up() { ... }
-    
+    void guest_can_not_vote_up() { ...}
+
     @Test
-    void authenticated_user_can_vote_up() { ... }
-    
+    void authenticated_user_can_vote_up() { ...}
+
     // 子类只需实现
     protected abstract String getResourceTypeName();
+
     protected abstract String getResourcePath();
 }
 
@@ -419,7 +473,7 @@ class QuestionUpVotesTest extends AbstractVoteUpTest {
     protected String getResourceTypeName() {
         return Question.class.getSimpleName();
     }
-    
+
     @Override
     protected String getResourcePath() {
         return "questions";
@@ -430,7 +484,8 @@ class QuestionUpVotesTest extends AbstractVoteUpTest {
 ### JSON 响应解析
 
 ```java
-TypeReference<CommonResult<PageInfo<QuestionVo>>> typeRef = new TypeReference<>() {};
+TypeReference<CommonResult<PageInfo<QuestionVo>>> typeRef = new TypeReference<>() {
+};
 CommonResult<PageInfo<QuestionVo>> commonResult = objectMapper.readValue(json, typeRef);
 ```
 
@@ -444,6 +499,7 @@ CommonResult<PageInfo<QuestionVo>> commonResult = objectMapper.readValue(json, t
 ## 开发指南
 
 ### 添加新功能
+
 1. 先编写测试用例（TDD 原则）
 2. 创建对应的数据库迁移脚本
 3. 运行 MyBatis Generator 生成代码
@@ -451,11 +507,13 @@ CommonResult<PageInfo<QuestionVo>> commonResult = objectMapper.readValue(json, t
 5. 运行测试确保通过
 
 ### 数据库变更
+
 1. 在 `src/main/resources/db/migration/` 下创建新的 Flyway 迁移脚本
 2. 运行 `mvn flyway:migrate` 应用变更
 3. 如需生成新的实体类，运行 `mvn mybatis-generator:generate`
 
 ### 编写测试
+
 继承 `BaseContainerTest` 类即可使用 Testcontainers 提供的 MySQL、Kafka、Redis 容器：
 
 ```java

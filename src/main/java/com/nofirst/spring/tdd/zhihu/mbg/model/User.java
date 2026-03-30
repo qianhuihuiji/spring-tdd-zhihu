@@ -60,6 +60,11 @@ public class User implements Serializable {
      */
     private Date emailVerifiedAt;
 
+    /**
+     * 头像相对路径
+     */
+    private String avatar;
+
     private static final long serialVersionUID = 1L;
 
     public User() {
@@ -133,6 +138,14 @@ public class User implements Serializable {
 
     public void setEmailVerifiedAt(Date emailVerifiedAt) {
         this.emailVerifiedAt = emailVerifiedAt;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     @Override

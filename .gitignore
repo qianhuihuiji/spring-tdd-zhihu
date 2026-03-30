@@ -19,3 +19,4 @@ buildNumber.properties
 
 # 本地配置文件
 src/main/resources/application.yaml
+/uploads/avatars/
