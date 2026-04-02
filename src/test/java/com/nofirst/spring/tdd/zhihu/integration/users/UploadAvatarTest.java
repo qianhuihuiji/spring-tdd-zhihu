@@ -5,14 +5,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nofirst.spring.tdd.zhihu.integration.BaseContainerTest;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.User;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -27,6 +33,27 @@ public class UploadAvatarTest extends BaseContainerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private static Path tempAvatarDir;
+
+    @BeforeAll
+    static void setUpTempDir() throws IOException {
+        tempAvatarDir = Files.createTempDirectory("test-avatars");
+    }
+
+    @DynamicPropertySource
+    static void overrideProperties(DynamicPropertyRegistry registry) {
+        registry.add("avatar.upload.dir", () -> tempAvatarDir.toString());
+    }
+
+    @AfterAll
+    static void tearDownTempDir() throws IOException {
+        if (tempAvatarDir != null && Files.exists(tempAvatarDir)) {
+            Files.walk(tempAvatarDir)
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(path -> path.toFile().delete());
+        }
+    }
 
     @Test
     void authenticated_user_can_upload_avatar_and_get_avatar_path() throws Exception {
@@ -48,7 +75,7 @@ public class UploadAvatarTest extends BaseContainerTest {
         assertThat(user.getAvatar()).isEqualTo(path);
 
         // and file exists on disk
-        Path avatarFile = Paths.get("uploads", "avatars", Paths.get(path).getFileName().toString());
+        Path avatarFile = tempAvatarDir.resolve(Paths.get(path).getFileName().toString());
         assertThat(Files.exists(avatarFile)).isTrue();
     }
 }
