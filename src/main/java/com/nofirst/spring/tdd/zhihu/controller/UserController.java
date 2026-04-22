@@ -9,6 +9,7 @@ import com.nofirst.spring.tdd.zhihu.model.dto.UserLoginDto;
 import com.nofirst.spring.tdd.zhihu.model.dto.UserRegisterDto;
 import com.nofirst.spring.tdd.zhihu.security.AccountUser;
 import com.nofirst.spring.tdd.zhihu.security.JwtUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/auth", produces = "application/json;charset=utf-8")
 @AllArgsConstructor
+@Tag(name = "用户管理", description = "提供用户的增删改查操作")
 public class UserController {
 
     private final AuthenticationManager authenticationManager;
