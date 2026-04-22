@@ -16,6 +16,8 @@
     <properties>
         <java.version>17</java.version>
         <java-jwt.version>0.11.5</java-jwt.version>
+        <xxl-job.version>3.4.0</xxl-job.version>
+        <xxl-job-admin.version>3.4.1-SNAPSHOT</xxl-job-admin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -106,6 +108,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <version>${xxl-job.version}</version>
+        </dependency>
 
         <!--   test 相关-->
         <dependency>
@@ -171,7 +178,7 @@
             <version>2.1.8</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- Eclipse Angus Mail - 与 GreenMail 兼容的邮件 API 实现 -->
         <dependency>
             <groupId>org.eclipse.angus</groupId>

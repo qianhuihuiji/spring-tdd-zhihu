@@ -1,8 +1,8 @@
 package com.nofirst.spring.tdd.zhihu.task;
 
+import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +12,7 @@ public class CalculateActiveUserTask {
 
     private ActiveUserService activeUserService;
 
-    @Scheduled(cron = "0 0 1 * * *")
+    @XxlJob("calculateActiveUserTask")
     public void run() {
         activeUserService.calculateAndCacheActiveUsers();
     }
