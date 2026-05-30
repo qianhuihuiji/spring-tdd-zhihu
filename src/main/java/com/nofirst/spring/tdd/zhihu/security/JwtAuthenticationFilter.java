@@ -1,8 +1,8 @@
 package com.nofirst.spring.tdd.zhihu.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nofirst.spring.tdd.zhihu.common.ResultCode;
 import com.nofirst.spring.tdd.zhihu.exception.ApiException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,8 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new ApiException(ResultCode.UNAUTHORIZED, "token 已过期");
             }
 
-            String username = claims.getSubject();
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, null);
+            String username = claims.get("username").toString();
+            AccountUser userDetails = (AccountUser) userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (EmailNotVerifiedException e) {

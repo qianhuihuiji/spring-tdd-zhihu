@@ -21,9 +21,20 @@ Spring 6.0对CGLIB做了**彻底的重构**：
 # 下载Arthas
 curl -O https://arthas.aliyun.com/arthas-boot.jar
 
-# 启动Arthas
+# 默认启动启动命令
 java -jar arthas-boot.jar
+# 推荐指定端口方式启动
+java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999
+# 或者使用随机端口，让系统自动选择可用端口
+java -jar arthas-boot.jar --telnet-port 0 --http-port 0
 ```
+
+> Arthas 默认会使用 3658 端口，而在 Windows 中，这个端口很有可能被系统内核保留，通过
+`netsh int ipv4 show excludedportrange protocol=tcp`命令可以进行确认
+> 从而导致
+`ERROR c.t.a.c.s.t.i.h.HttpTelnetTermServer -Error listening to port 3658 java.net.BindException: Address already in use: bind`
+> 报错
+> 可从 `~/logs/arthas/arthas.log`日志文件查看
 
 ### 步骤2：选择你的Spring Boot进程
 
