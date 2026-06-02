@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll() // 登录接口放行
                         .requestMatchers(HttpMethod.GET, "/questions").permitAll() // 除了获取问题列表之外的接口，均不放行
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated() // 其他接口需认证
                 )// 异常处理器
                 .exceptionHandling(
