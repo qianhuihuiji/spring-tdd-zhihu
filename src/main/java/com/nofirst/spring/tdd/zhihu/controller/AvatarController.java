@@ -4,8 +4,11 @@ import com.nofirst.spring.tdd.zhihu.common.CommonResult;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.User;
 import com.nofirst.spring.tdd.zhihu.model.vo.UserVo;
+import com.nofirst.spring.tdd.zhihu.security.AccountUser;
 import com.nofirst.spring.tdd.zhihu.service.AvatarService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +28,10 @@ public class AvatarController {
     private final UserMapper userMapper;
 
     @PostMapping(path = "/{id}/avatar", consumes = "multipart/form-data")
+    @PreAuthorize("@userPolicy.canModifyAvatar(#id, #accountUser)")
     public CommonResult<String> uploadAvatar(@PathVariable Integer id,
-                                             @RequestParam("file") MultipartFile file) {
+                                             @RequestParam("file") MultipartFile file,
+                                             @AuthenticationPrincipal AccountUser accountUser) {
         try {
             String relativePath = avatarService.saveAvatar(id, file);
             return CommonResult.success(relativePath);

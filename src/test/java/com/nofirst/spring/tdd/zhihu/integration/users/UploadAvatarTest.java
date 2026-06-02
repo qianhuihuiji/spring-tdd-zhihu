@@ -60,8 +60,8 @@ public class UploadAvatarTest extends BaseContainerTest {
         // given
         MockMultipartFile file = new MockMultipartFile("file", "avatar.jpg", "image/jpeg", "dummy".getBytes());
 
-        // when
-        var mvcResult = this.mockMvc.perform(multipart("/users/{id}/avatar", 1).file(file))
+        // when: John 的 userId=2，只能上传自己的头像
+        var mvcResult = this.mockMvc.perform(multipart("/users/{id}/avatar", 2).file(file))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data").isNotEmpty())
@@ -71,11 +71,21 @@ public class UploadAvatarTest extends BaseContainerTest {
         String json = mvcResult.getResponse().getContentAsString();
         JsonNode node = objectMapper.readTree(json);
         String path = node.get("data").asText();
-        User user = userMapper.selectByPrimaryKey(1);
+        User user = userMapper.selectByPrimaryKey(2);
         assertThat(user.getAvatar()).isEqualTo(path);
 
         // and file exists on disk
         Path avatarFile = tempAvatarDir.resolve(Paths.get(path).getFileName().toString());
         assertThat(Files.exists(avatarFile)).isTrue();
+    }
+
+    @Test
+    void user_cannot_upload_avatar_for_other_user() throws Exception {
+        // given
+        MockMultipartFile file = new MockMultipartFile("file", "avatar.jpg", "image/jpeg", "dummy".getBytes());
+
+        // when: John (id=2) 尝试上传头像到 Jane (id=1)
+        this.mockMvc.perform(multipart("/users/{id}/avatar", 1).file(file))
+                .andExpect(status().isForbidden());
     }
 }

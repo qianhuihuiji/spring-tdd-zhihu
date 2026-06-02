@@ -43,7 +43,7 @@ public class AnswerController {
 
     @DeleteMapping("/answers/{answerId}")
     @PreAuthorize("@answerPolicy.canDelete(#answerId, #accountUser)")
-    public CommonResult<String> store(@PathVariable Integer answerId, @AuthenticationPrincipal AccountUser accountUser) {
+    public CommonResult<String> destroy(@PathVariable Integer answerId, @AuthenticationPrincipal AccountUser accountUser) {
         answerService.destroy(answerId);
         return CommonResult.success("ok");
     }

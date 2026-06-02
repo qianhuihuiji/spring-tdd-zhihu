@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
         CommentExample.Criteria criteria = commentExample.createCriteria();
         criteria.andCommentedIdEqualTo(commentedId);
         criteria.andCommentedTypeEqualTo(commentedType);
-        List<Comment> comments = commentMapper.selectByExample(commentExample);
+        List<Comment> comments = commentMapper.selectByExampleWithBLOBs(commentExample);
         PageInfo<Comment> commentPageInfo = new PageInfo<>(comments);
         List<CommentVo> result = new ArrayList<>();
         for (Comment comment : comments) {
