@@ -7,6 +7,8 @@ import com.nofirst.spring.tdd.zhihu.model.dto.CommentDto;
 import com.nofirst.spring.tdd.zhihu.model.vo.CommentVo;
 import com.nofirst.spring.tdd.zhihu.security.AccountUser;
 import com.nofirst.spring.tdd.zhihu.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "回答评论")
 @RestController
 @Validated
 @AllArgsConstructor
@@ -25,6 +28,7 @@ public class AnswerCommentsController {
 
     private final CommentService commentService;
 
+    @Operation(summary = "发表回答评论")
     @PostMapping("/comments/answers/{answerId}")
     public CommonResult<String> store(@PathVariable Integer answerId,
                                       @Validated @RequestBody CommentDto commentDto,
@@ -33,6 +37,7 @@ public class AnswerCommentsController {
         return CommonResult.success("ok");
     }
 
+    @Operation(summary = "获取回答评论列表")
     @GetMapping("/comments/answers/{answerId}")
     public CommonResult<PageInfo<CommentVo>> index(@PathVariable Integer answerId,
                                                    @RequestParam @NotNull Integer pageIndex,

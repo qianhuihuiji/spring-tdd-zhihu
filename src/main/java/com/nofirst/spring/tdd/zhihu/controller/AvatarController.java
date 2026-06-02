@@ -6,6 +6,8 @@ import com.nofirst.spring.tdd.zhihu.mbg.model.User;
 import com.nofirst.spring.tdd.zhihu.model.vo.UserVo;
 import com.nofirst.spring.tdd.zhihu.security.AccountUser;
 import com.nofirst.spring.tdd.zhihu.service.AvatarService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Tag(name = "用户头像")
 @RestController
 @RequestMapping(path = "/users", produces = "application/json;charset=utf-8")
 @AllArgsConstructor
@@ -27,6 +30,7 @@ public class AvatarController {
     private final AvatarService avatarService;
     private final UserMapper userMapper;
 
+    @Operation(summary = "上传头像")
     @PostMapping(path = "/{id}/avatar", consumes = "multipart/form-data")
     @PreAuthorize("@userPolicy.canModifyAvatar(#id, #accountUser)")
     public CommonResult<String> uploadAvatar(@PathVariable Integer id,
@@ -42,6 +46,7 @@ public class AvatarController {
         }
     }
 
+    @Operation(summary = "获取用户信息")
     @GetMapping(path = "/{id}")
     public CommonResult<UserVo> getUser(@PathVariable Integer id) {
         User user = userMapper.selectByPrimaryKey(id);

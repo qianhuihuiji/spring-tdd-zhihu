@@ -2,6 +2,7 @@ package com.nofirst.spring.tdd.zhihu.controller;
 
 import com.nofirst.spring.tdd.zhihu.common.CommonResult;
 import com.nofirst.spring.tdd.zhihu.event.UserRegisteredEvent;
+import io.swagger.v3.oas.annotations.Operation;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.UserMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.User;
 import com.nofirst.spring.tdd.zhihu.mbg.model.UserExample;
@@ -41,6 +42,7 @@ public class UserController {
     private final ApplicationEventPublisher eventPublisher;
 
 
+    @Operation(summary = "用户注册")
     @PostMapping("/register")
     public CommonResult<String> register(@RequestBody @Validated UserRegisterDto registerDto) {
         // 1. 检查用户名是否已存在（使用数据库查询，避免全表加载到内存）
@@ -69,6 +71,7 @@ public class UserController {
         return CommonResult.success("注册成功");
     }
 
+    @Operation(summary = "用户登录")
     @PostMapping("/login")
     public CommonResult<String> login(@RequestBody @Validated UserLoginDto loginDTO) {
         // 1. 执行认证（用户名密码校验）
@@ -84,6 +87,7 @@ public class UserController {
         return CommonResult.success(token);
     }
 
+    @Operation(summary = "退出登录")
     @GetMapping("/logout")
     public CommonResult<String> logout() {
         // JWT 是无状态的，服务端不保存会话信息
