@@ -9,7 +9,6 @@ import com.nofirst.spring.tdd.zhihu.mbg.mapper.AnswerMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.AnswerExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Question;
-import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.model.dto.AnswerDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,14 +35,11 @@ class PostAnswersTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        cleanUpQuestions();
-
-        cleanUpAnswers();
+        seeder().cleanAll();
     }
 
     @Test
     void guests_may_not_post_an_answer() throws Exception {
-        // given
         Question question = QuestionFactory.createPublishedQuestion();
         question.setId(1);
 
@@ -57,20 +53,17 @@ class PostAnswersTest extends BaseContainerTest {
     }
 
     @Test
-    // 下面这行代码，会在 customUserDetailsService 的 loadUserByUsername() 方法中，将 John 查出来，模拟登录
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void signed_in_user_can_post_an_answer_to_a_published_question() throws Exception {
-        // given：准备测试数据
-        Question question = QuestionFactory.createPublishedQuestion();
-        questionMapper.insert(question);
+        // given
+        Question question = seeder().aQuestion(1);
         AnswerExample answerExample = new AnswerExample();
         AnswerExample.Criteria criteria = answerExample.createCriteria();
-        // John 用户的userId就是2
         criteria.andUserIdEqualTo(2);
         long beforeCount = answerMapper.countByExample(answerExample);
         assertThat(beforeCount).isEqualTo(0);
 
-        // when：调用接口并获取返回结果
+        // when
         AnswerDto answer = AnswerFactory.createAnswerDto();
         this.mockMvc.perform(post("/questions/{id}/answers", question.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +73,7 @@ class PostAnswersTest extends BaseContainerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.SUCCESS.getCode()));
 
-        // then：数据库中answer数据增加了一条
+        // then
         long afterCount = answerMapper.countByExample(answerExample);
         assertThat(afterCount).isEqualTo(1);
         Question questionAfter = questionMapper.selectByPrimaryKey(question.getId());
@@ -90,17 +83,16 @@ class PostAnswersTest extends BaseContainerTest {
     @Test
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void can_not_post_an_answer_to_an_unpublished_question() throws Exception {
-        // given：准备测试数据
-        Question question = QuestionFactory.createUnpublishedQuestion();
-        questionMapper.insert(question);
+        // given
+        Question question = seeder().anUnpublishedQuestion(1);
 
-        // when：调用接口并获取返回结果
+        // when
         AnswerDto answer = AnswerFactory.createAnswerDto();
         this.mockMvc.perform(post("/questions/{id}/answers", question.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(answer))
                 )
-                // then:
+                // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.FAILED.getCode()))
                 .andExpect(jsonPath("$.message").value("question not publish"));
@@ -110,8 +102,7 @@ class PostAnswersTest extends BaseContainerTest {
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void content_is_required_to_post_answers() throws Exception {
         // given
-        Question question = QuestionFactory.createPublishedQuestion();
-        questionMapper.insert(question);
+        Question question = seeder().aQuestion(1);
         AnswerDto answerDto = AnswerFactory.createAnswerDto();
         answerDto.setContent("");
 

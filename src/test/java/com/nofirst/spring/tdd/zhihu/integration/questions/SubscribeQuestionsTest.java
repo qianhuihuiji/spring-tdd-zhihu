@@ -1,12 +1,9 @@
 package com.nofirst.spring.tdd.zhihu.integration.questions;
 
 import com.nofirst.spring.tdd.zhihu.common.ResultCode;
-import com.nofirst.spring.tdd.zhihu.factory.QuestionFactory;
 import com.nofirst.spring.tdd.zhihu.integration.BaseContainerTest;
-import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.SubscriptionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Question;
-import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.SubscriptionExample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,13 +21,10 @@ class SubscribeQuestionsTest extends BaseContainerTest {
 
     @Autowired
     private SubscriptionMapper subscriptionMapper;
-    @Autowired
-    private QuestionMapper questionMapper;
 
     @BeforeEach
     public void setupTestData() {
-        cleanUpSubscriptions();
-        cleanUpQuestions();
+        seeder().cleanAll();
     }
 
     @Test
@@ -48,8 +42,7 @@ class SubscribeQuestionsTest extends BaseContainerTest {
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void a_user_can_subscribe_to_questions() throws Exception {
         // given
-        Question question = QuestionFactory.createPublishedQuestion();
-        questionMapper.insert(question);
+        Question question = seeder().aQuestion(1);
 
         SubscriptionExample example = new SubscriptionExample();
         SubscriptionExample.Criteria criteria = example.createCriteria();
@@ -72,11 +65,9 @@ class SubscribeQuestionsTest extends BaseContainerTest {
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void a_user_can_unsubscribe_from_questions() throws Exception {
         // given
-        Question question = QuestionFactory.createPublishedQuestion();
-        questionMapper.insert(question);
+        Question question = seeder().aQuestion(1);
 
         // when
-        // 下面的逻辑在上一个测试中已经验证过了
         this.mockMvc.perform(post("/questions/{questionId}/subscriptions", question.getId()));
         this.mockMvc.perform(delete("/questions/{questionId}/subscriptions", question.getId()))
                 .andDo(print())

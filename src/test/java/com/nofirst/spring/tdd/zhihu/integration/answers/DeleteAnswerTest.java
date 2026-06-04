@@ -1,15 +1,12 @@
 package com.nofirst.spring.tdd.zhihu.integration.answers;
 
 import com.nofirst.spring.tdd.zhihu.common.ResultCode;
-import com.nofirst.spring.tdd.zhihu.factory.AnswerFactory;
-import com.nofirst.spring.tdd.zhihu.factory.QuestionFactory;
 import com.nofirst.spring.tdd.zhihu.integration.BaseContainerTest;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.AnswerMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Answer;
 import com.nofirst.spring.tdd.zhihu.mbg.model.AnswerExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.Question;
-import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +29,11 @@ class DeleteAnswerTest extends BaseContainerTest {
 
     @BeforeEach
     public void setupTestData() {
-        cleanUpQuestions();
-
-        cleanUpAnswers();
+        seeder().cleanAll();
     }
 
     @Test
     void guests_cannot_delete_answers() throws Exception {
-        // 目前这个路由还不存在，但是不影响 401 的返回
         this.mockMvc.perform(delete("/answers/{id}", 1))
                 .andExpect(status().is(401));
     }
@@ -47,12 +41,9 @@ class DeleteAnswerTest extends BaseContainerTest {
     @Test
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void unauthorized_users_cannot_delete_answers() throws Exception {
-        // given：准备测试数据
-        Question questionOfOtherUser = QuestionFactory.createPublishedQuestion();
-        questionOfOtherUser.setUserId(1);
-        questionMapper.insert(questionOfOtherUser);
-        Answer answerOfOther = AnswerFactory.createAnswer(questionOfOtherUser.getId());
-        answerMapper.insert(answerOfOther);
+        // given
+        Question questionOfOtherUser = seeder().aQuestion(1);
+        Answer answerOfOther = seeder().anAnswer(questionOfOtherUser.getId(), 1);
 
         // when
         this.mockMvc.perform(delete("/answers/{id}", answerOfOther.getId())
@@ -64,18 +55,14 @@ class DeleteAnswerTest extends BaseContainerTest {
     @Test
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void authorized_users_can_delete_answers() throws Exception {
-        // given：准备测试数据
-        Question questionOfJohn = QuestionFactory.createPublishedQuestion();
-        questionOfJohn.setUserId(2);
+        // given
+        Question questionOfJohn = seeder().aQuestion(2);
         questionOfJohn.setAnswersCount(10);
-        questionMapper.insert(questionOfJohn);
-        Answer answerOfJohn = AnswerFactory.createAnswer(questionOfJohn.getId());
-        answerOfJohn.setUserId(2);
-        answerMapper.insert(answerOfJohn);
+        questionMapper.updateByPrimaryKeySelective(questionOfJohn);
+        Answer answerOfJohn = seeder().anAnswer(questionOfJohn.getId(), 2);
 
         AnswerExample answerExample = new AnswerExample();
         AnswerExample.Criteria criteria = answerExample.createCriteria();
-        // John 用户的userId就是2
         criteria.andUserIdEqualTo(2);
         long beforeCount = answerMapper.countByExample(answerExample);
         assertThat(beforeCount).isEqualTo(1);

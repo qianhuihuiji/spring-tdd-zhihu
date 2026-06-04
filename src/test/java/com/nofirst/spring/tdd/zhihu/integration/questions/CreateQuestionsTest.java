@@ -10,6 +10,7 @@ import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.model.dto.QuestionDto;
 import com.nofirst.spring.tdd.zhihu.service.TranslatorService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -148,6 +149,7 @@ class CreateQuestionsTest extends BaseContainerTest {
     }
 
     @Test
+    @Tag("online")
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void get_slug_when_create_a_question() throws Exception {
         // given

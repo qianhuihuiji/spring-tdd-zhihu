@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.nofirst.spring.tdd.zhihu.common.CommonResult;
-import com.nofirst.spring.tdd.zhihu.factory.AnswerFactory;
-import com.nofirst.spring.tdd.zhihu.factory.QuestionFactory;
 import com.nofirst.spring.tdd.zhihu.integration.AbstractVoteUpTest;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.AnswerMapper;
 import com.nofirst.spring.tdd.zhihu.mbg.mapper.QuestionMapper;
@@ -66,13 +64,9 @@ class AnswerUpVotesTest extends AbstractVoteUpTest {
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void answer_can_know_it_is_voted_up() throws Exception {
         // given
-        Question publishedQuestion = QuestionFactory.createPublishedQuestion();
-        questionMapper.insert(publishedQuestion);
-        Answer answerWithoutVoting = AnswerFactory.createAnswer(publishedQuestion.getId());
-        answerMapper.insert(answerWithoutVoting);
-        Answer answerWithVoting = AnswerFactory.createAnswer(publishedQuestion.getId());
-        answerMapper.insert(answerWithVoting);
-        // vote up
+        Question publishedQuestion = seeder().aQuestion(1);
+        Answer answerWithoutVoting = seeder().anAnswer(publishedQuestion.getId(), 1);
+        Answer answerWithVoting = seeder().anAnswer(publishedQuestion.getId(), 1);
         this.mockMvc.perform(post(getUpVoteUrl(answerWithVoting.getId())));
 
         // when
@@ -93,7 +87,6 @@ class AnswerUpVotesTest extends AbstractVoteUpTest {
         assertThat(data.get(1).getId()).isEqualTo(answerWithVoting.getId());
         assertThat(data.get(1).getVoteType()).isEqualTo(VoteActionType.VOTE_UP.getCode());
 
-        // 切换到1号用户进行访问
         json = this.mockMvc.perform(get("/questions/{questionId}/answers?pageIndex=1&pageSize=20", publishedQuestion.getId())
                         .with(user(customUserDetailsService.loadUserByUsername("Jane")))
                 ).andExpect(status().isOk()).andReturn().getResponse()
@@ -101,7 +94,6 @@ class AnswerUpVotesTest extends AbstractVoteUpTest {
         pageResult = objectMapper.readValue(json, typeRef);
         data = pageResult.getData().getList();
         assertThat(data.size()).isEqualTo(2);
-        // 对1号用户而言，两条都是没有点过赞的
         assertThat(data.get(0).getId()).isEqualTo(answerWithoutVoting.getId());
         assertThat(data.get(0).getVoteType()).isEqualTo(VoteActionType.NOTHING.getCode());
         assertThat(data.get(1).getId()).isEqualTo(answerWithVoting.getId());
@@ -112,13 +104,9 @@ class AnswerUpVotesTest extends AbstractVoteUpTest {
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void can_know_up_votes_count() throws Exception {
         // given
-        Question publishedQuestion = QuestionFactory.createPublishedQuestion();
-        questionMapper.insert(publishedQuestion);
-        Answer answer = AnswerFactory.createAnswer(publishedQuestion.getId());
-        answerMapper.insert(answer);
-        // 2号用户 vote up
+        Question publishedQuestion = seeder().aQuestion(1);
+        Answer answer = seeder().anAnswer(publishedQuestion.getId(), 1);
         this.mockMvc.perform(post(getUpVoteUrl(answer.getId()))).andDo(print());
-        // 1号用户 vote up
         this.mockMvc.perform(post(getUpVoteUrl(answer.getId()))
                 .with(user(customUserDetailsService.loadUserByUsername("Jane")))).andDo(print());
 

@@ -20,6 +20,7 @@ import com.nofirst.spring.tdd.zhihu.mbg.model.NotificationExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.QuestionExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.SubscriptionExample;
 import com.nofirst.spring.tdd.zhihu.mbg.model.UserExample;
+import com.nofirst.spring.tdd.zhihu.factory.Seeder;
 import com.nofirst.spring.tdd.zhihu.mbg.model.VoteExample;
 import com.redis.testcontainers.RedisContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,15 @@ public abstract class BaseContainerTest {
     private ActivityMapper activityMapper;
     @Autowired
     private EmailVerificationMapper emailVerificationMapper;
+
+    private Seeder _seeder;
+
+    protected Seeder seeder() {
+        if (_seeder == null) {
+            _seeder = new Seeder(userMapper, questionMapper, answerMapper, commentMapper, voteMapper, subscriptionMapper);
+        }
+        return _seeder;
+    }
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
