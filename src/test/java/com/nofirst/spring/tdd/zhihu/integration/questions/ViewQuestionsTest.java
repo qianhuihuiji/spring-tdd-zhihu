@@ -55,8 +55,11 @@ class ViewQuestionsTest extends BaseContainerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * 测试逻辑：已登录用户查看一个已发布问题的详情；
+     * 前置：已发布问题已入库；预期：返回成功，QuestionVo 包含 id/userId/title/content/createdAt/updatedAt。
+     */
     @Test
-    // 下面这行代码，会在 customUserDetailsService 的 loadUserByUsername() 方法中，将 John 查出来，模拟登录
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void user_can_view_a_published_question() throws Exception {
         // given：准备测试数据
@@ -87,6 +90,11 @@ class ViewQuestionsTest extends BaseContainerTest {
         assertThat(questionVo.getUserId()).isEqualTo(question.getUserId());
         assertThat(questionVo.getTitle()).isEqualTo(question.getTitle());
         assertThat(questionVo.getContent()).isEqualTo(question.getContent());
+        assertThat(questionVo.getCreatedAt()).isNotNull();
+        assertThat(questionVo.getUpdatedAt()).isNotNull();
+        // MySQL datetime 不保留毫秒，比较到秒级
+        assertThat(questionVo.getCreatedAt().getTime() / 1000).isEqualTo(question.getCreatedAt().getTime() / 1000);
+        assertThat(questionVo.getUpdatedAt().getTime() / 1000).isEqualTo(question.getUpdatedAt().getTime() / 1000);
     }
 
     @Test
@@ -139,6 +147,10 @@ class ViewQuestionsTest extends BaseContainerTest {
         assertThat(answersPage.getSize()).isEqualTo(20);
     }
 
+    /**
+     * 测试逻辑：已登录用户通过 id + slug 查看已发布问题详情；
+     * 前置：已发布问题（含 slug）已入库；预期：返回成功，QuestionVo 包含时间字段。
+     */
     @Test
     @WithUserDetails(value = "John", userDetailsServiceBeanName = "customUserDetailsService")
     void user_can_view_a_published_question_with_slug() throws Exception {
@@ -171,5 +183,9 @@ class ViewQuestionsTest extends BaseContainerTest {
         assertThat(questionVo.getUserId()).isEqualTo(question.getUserId());
         assertThat(questionVo.getTitle()).isEqualTo(question.getTitle());
         assertThat(questionVo.getContent()).isEqualTo(question.getContent());
+        assertThat(questionVo.getCreatedAt()).isNotNull();
+        assertThat(questionVo.getUpdatedAt()).isNotNull();
+        assertThat(questionVo.getCreatedAt().getTime() / 1000).isEqualTo(question.getCreatedAt().getTime() / 1000);
+        assertThat(questionVo.getUpdatedAt().getTime() / 1000).isEqualTo(question.getUpdatedAt().getTime() / 1000);
     }
 }

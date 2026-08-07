@@ -149,6 +149,8 @@ public class QuestionServiceImpl implements QuestionService {
         questionVo.setUserId(question.getUserId());
         questionVo.setTitle(question.getTitle());
         questionVo.setContent(question.getContent());
+        questionVo.setCreatedAt(question.getCreatedAt());
+        questionVo.setUpdatedAt(question.getUpdatedAt());
         questionVo.setAnswers(answerService.answers(question.getId(), 1, 20, accountUser)); // 此处表示，首次显示问题列表的第一页，每页20个
 
         return questionVo;
