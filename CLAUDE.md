@@ -104,3 +104,14 @@ src/test/java/com/nofirst/spring/tdd/zhihu/
 - `uploads/avatars/` 目录不提交到 Git
 - 邮件测试使用 GreenMail 轻量级测试服务器，集成测试中通过 `BaseContainerTest` 静态初始化
 - `@Tag("online")` 标记需要访问外部服务的测试（如百度翻译），默认排除
+
+## AI 开发规范
+
+执行任何开发任务前，AI MUST 按顺序读取以下文件：
+
+1. `ai-rules/AI-Agent-Harness-规范.md` — 本项目的上下文、工具、验证、流程、权限和记录规范
+2. `ai-rules/测试用例编写规范.md` — 测试编写、断言、Mock 和数据准备规则
+
+涉及新需求时，还需读取对应的 SDD 规格文档（通常在 `docs/sdd/` 下）。
+
+以上文件中的 MUST / MUST NOT 指令对 AI 具有约束力。AI 不得跳过或自行解释。
